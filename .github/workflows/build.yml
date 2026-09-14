@@ -19,9 +19,22 @@ jobs:
           cache: 'maven'
 
       - name: Compilar con Maven
-        run: mvn -B clean package
+        id: build
+        run: |
+          set +e
+          mvn -B clean package > build.log 2>&1
+          code=$?
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Mostrar errores si fallo
+        if: steps.build.outputs.exit_code != '0'
+        run: |
+          grep -n -i -A2 "ERROR\]" build.log | head -100 | sed 's/^/::error::/'
+          exit 1
 
       - name: Subir el .jar como artifact descargable
+        if: steps.build.outputs.exit_code == '0'
         uses: actions/upload-artifact@v4
         with:
           name: JefeCabraPlugin-jar
