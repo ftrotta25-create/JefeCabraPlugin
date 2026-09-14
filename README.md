@@ -26,6 +26,24 @@ plugin automaticamente en los servidores de GitHub.
    descargá el artifact **JefeCabraPlugin-jar** — ahi está tu .jar
    listo para poner en `plugins/`.
 
+## Receta de crafteo del Cuerno de Cabra Maldito
+
+Se craftea en la mesa de crafteo normal, con esta forma:
+
+```
+ . R .
+ B H B
+ . R .
+```
+
+- **H** (centro): cualquier Cuerno de Cabra vanilla (los 8 sonidos sirven)
+- **B** (izquierda/derecha): Polvo de Blaze
+- **R** (arriba/abajo): Redstone
+
+El resultado es el cuerno "de verdad" (con la marca interna que el
+altar reconoce) — no depende de ExecutableItems ni de ningún otro
+plugin de crafteo custom.
+
 ## Como probarlo (compilando local, si en algun momento tenés Maven)
 
 
