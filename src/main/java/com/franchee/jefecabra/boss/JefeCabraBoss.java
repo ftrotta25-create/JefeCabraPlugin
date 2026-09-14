@@ -32,7 +32,10 @@ public class JefeCabraBoss {
     private static final double VIDA_MAXIMA = 200.0;
     private static final double DANIO_BASE = 12.0;
     private static final double VELOCIDAD_BASE = 0.3;
-    private static final float TAMANO = 1.8f; // 1.0 = tamano vanilla de una cabra
+    // NOTA: el escalado de tamano (Attribute.GENERIC_SCALE) recien existe
+    // desde Paper/Bukkit 1.20.5. En 1.20.1 no hay forma de agrandar la
+    // entidad vía API vanilla; para eso hace falta un modelo custom via
+    // resource pack (ver README).
 
     private final JefeCabraPlugin plugin;
     private final ItemFactory itemFactory;
@@ -80,10 +83,6 @@ public class JefeCabraBoss {
 
         AttributeInstance velocidad = entidad.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED);
         if (velocidad != null) velocidad.setBaseValue(VELOCIDAD_BASE);
-
-        // Tamano aumentado. GENERIC_SCALE existe desde 1.20.5+.
-        AttributeInstance escala = entidad.getAttribute(Attribute.GENERIC_SCALE);
-        if (escala != null) escala.setBaseValue(TAMANO);
     }
 
     private void iniciarTick() {

@@ -1,7 +1,14 @@
 # JefeCabraPlugin
 
-Plugin standalone para Paper 1.21.1. Implementa al **Jefe Cabra**:
+Plugin standalone para Paper **1.20.1**. Implementa al **Jefe Cabra**:
 un jefe mid-game, invocable con un altar, con 3 fases y un drop unico.
+
+> **Sobre el tamaño de la cabra:** en 1.20.1 no existe `Attribute.GENERIC_SCALE`
+> (Mojang lo agregó recién en 1.20.5), así que por API vanilla no hay forma
+> de agrandar la entidad. El jefe queda con el tamaño normal de una cabra
+> por ahora. La única forma real de lograr el tamaño mayor en esta versión
+> es con un modelo 3D custom vía resource pack (encaja con tu FranWorld) —
+> avisame si querés que lo armemos así.
 
 ## Como conseguir el .jar sin instalar nada (GitHub Actions)
 
