@@ -25,7 +25,7 @@ public class BossCombatListener implements Listener {
 
         // La embestida nativa de la cabra dispara este mismo evento;
         // aprovechamos para aplicar Lentitud como "aturdimiento".
-        jugador.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 40, 1));
+        jugador.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 40, 1));
     }
 
     @EventHandler
