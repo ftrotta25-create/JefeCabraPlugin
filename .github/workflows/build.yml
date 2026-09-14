@@ -1,0 +1,28 @@
+name: Compilar JefeCabraPlugin
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configurar JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'maven'
+
+      - name: Compilar con Maven
+        run: mvn -B clean package
+
+      - name: Subir el .jar como artifact descargable
+        uses: actions/upload-artifact@v4
+        with:
+          name: JefeCabraPlugin-jar
+          path: target/JefeCabraPlugin.jar

@@ -1,0 +1,12 @@
+name: JefeCabraPlugin
+version: 1.0.0
+main: com.franchee.jefecabra.JefeCabraPlugin
+api-version: '1.21'
+author: Franchee
+description: Jefe "Cabra" invocable por altar, con fases y drop unico.
+
+commands:
+  darcuerno:
+    description: Entrega el Cuerno de Cabra Maldito (item de invocacion)
+    usage: /darcuerno
+    permission: jefecabra.admin
