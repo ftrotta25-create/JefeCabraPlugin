@@ -12,9 +12,11 @@ import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Goat;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.SmallFireball;
 import org.bukkit.GameMode;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -37,6 +39,9 @@ public class JefeCabraBoss {
     private static final double RANGO_PERSECUCION = 20.0;
     private static final double RANGO_ATAQUE = 2.5;
     private static final long COOLDOWN_ATAQUE_MS = 1200L;
+    private static final double RANGO_DISPARO_MAX = 18.0;
+    private static final long COOLDOWN_DISPARO_MS = 3000L;
+    private static final float YIELD_BOLA_FUEGO = 0f; // sin dano a bloques ni fuego
     // NOTA: el escalado de tamano (Attribute.GENERIC_SCALE) recien existe
     // desde Paper/Bukkit 1.20.5. En 1.20.1 no hay forma de agrandar la
     // entidad vía API vanilla; para eso hace falta un modelo custom via
@@ -50,6 +55,7 @@ public class JefeCabraBoss {
     private boolean fase2Activada = false;
     private boolean fase3Activada = false;
     private long proximoAtaquePermitido = 0L;
+    private long proximoDisparoPermitido = 0L;
     private BukkitRunnable tickTask;
 
     // Registro de jefes activos para poder consultarlos desde otros listeners
@@ -148,7 +154,21 @@ public class JefeCabraBoss {
             double valorDanio = danio != null ? danio.getValue() : DANIO_BASE;
             objetivo.damage(valorDanio, entidad);
             proximoAtaquePermitido = ahora + COOLDOWN_ATAQUE_MS;
+        } else if (distancia > RANGO_ATAQUE && distancia <= RANGO_DISPARO_MAX && ahora >= proximoDisparoPermitido) {
+            dispararBolaFuego(objetivo);
+            proximoDisparoPermitido = ahora + COOLDOWN_DISPARO_MS;
         }
+    }
+
+    /** Dispara una bola de fuego chica hacia el jugador. Dano bajo, fijo (ver BossCombatListener). */
+    private void dispararBolaFuego(Player objetivo) {
+        Vector direccion = objetivo.getEyeLocation().toVector()
+                .subtract(entidad.getEyeLocation().toVector())
+                .normalize();
+
+        SmallFireball bola = entidad.launchProjectile(SmallFireball.class, direccion);
+        bola.setYield(YIELD_BOLA_FUEGO);
+        bola.setIsIncendiary(false);
     }
 
     private void revisarFases() {

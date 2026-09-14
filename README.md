@@ -64,11 +64,14 @@ por lore, unbreakable, marcado con PersistentDataContainer).
   en `JefeCabraBoss.java` — todo el balance está ahí arriba en constantes.
 - La estructura del altar (`BLOQUE_CENTRAL` / `BLOQUE_MARCO`) en
   `AltarListener.java`.
-- El knockback extra del yelmo al golpear NO está implementado todavía
-  como efecto activo (solo está en el lore) — si querés que funcione
-  de verdad, se agrega con un listener de `EntityDamageByEntityEvent`
-  que chequee si el atacante tiene el yelmo puesto vía
-  `ItemFactory.esYelmoTestarazo(...)`. Te lo agrego si querés.
+- El knockback extra del yelmo ya está implementado como efecto activo:
+  25% de probabilidad de empujar extra al golpear (constante
+  `PROB_KNOCKBACK_YELMO` en `BossCombatListener.java`).
+- El jefe también dispara bolas de fuego chicas a distancia (entre el
+  rango de ataque cuerpo a cuerpo y 18 bloques), con daño fijo bajo
+  (`DANIO_BOLA_FUEGO` en `BossCombatListener.java`, por defecto 4) y
+  sin dañar bloques ni prender fuego. Cooldown de 3s
+  (`COOLDOWN_DISPARO_MS` en `JefeCabraBoss.java`).
 
 ## Integrar con MatiasPlugin
 

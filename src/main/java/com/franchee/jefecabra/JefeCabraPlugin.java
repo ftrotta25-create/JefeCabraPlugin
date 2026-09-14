@@ -17,7 +17,7 @@ public class JefeCabraPlugin extends JavaPlugin {
         this.itemFactory = new ItemFactory(this);
 
         getServer().getPluginManager().registerEvents(new AltarListener(this, itemFactory), this);
-        getServer().getPluginManager().registerEvents(new BossCombatListener(), this);
+        getServer().getPluginManager().registerEvents(new BossCombatListener(itemFactory), this);
 
         getLogger().info("JefeCabraPlugin habilitado.");
     }
