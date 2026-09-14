@@ -12,9 +12,11 @@ import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Goat;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.GameMode;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -31,7 +33,10 @@ public class JefeCabraBoss {
     // --- Balance mid-game. Ajustar libremente segun testeo ---
     private static final double VIDA_MAXIMA = 200.0;
     private static final double DANIO_BASE = 12.0;
-    private static final double VELOCIDAD_BASE = 0.3;
+    private static final double VELOCIDAD_BASE = 0.22; // antes 0.3
+    private static final double RANGO_PERSECUCION = 20.0;
+    private static final double RANGO_ATAQUE = 2.5;
+    private static final long COOLDOWN_ATAQUE_MS = 1200L;
     // NOTA: el escalado de tamano (Attribute.GENERIC_SCALE) recien existe
     // desde Paper/Bukkit 1.20.5. En 1.20.1 no hay forma de agrandar la
     // entidad vía API vanilla; para eso hace falta un modelo custom via
@@ -44,6 +49,7 @@ public class JefeCabraBoss {
 
     private boolean fase2Activada = false;
     private boolean fase3Activada = false;
+    private long proximoAtaquePermitido = 0L;
     private BukkitRunnable tickTask;
 
     // Registro de jefes activos para poder consultarlos desde otros listeners
@@ -95,6 +101,7 @@ public class JefeCabraBoss {
                 }
                 actualizarBossBar();
                 revisarFases();
+                manejarCombate();
             }
         };
         tickTask.runTaskTimer(plugin, 0L, 10L); // cada 0.5s
@@ -112,6 +119,35 @@ public class JefeCabraBoss {
             } else {
                 bossBar.removeViewer(jugador);
             }
+        }
+    }
+
+    /**
+     * Los Goat vanilla no tienen IA de ataque cuerpo a cuerpo (solo
+     * embisten esporadicamente por su cuenta), asi que el "ataque" del
+     * jefe lo manejamos a mano: persigue al jugador valido mas cercano
+     * dentro de RANGO_PERSECUCION, y si esta a RANGO_ATAQUE le pega con
+     * un cooldown fijo.
+     */
+    private void manejarCombate() {
+        Player objetivo = entidad.getWorld().getPlayers().stream()
+                .filter(p -> p.getGameMode() != GameMode.SPECTATOR && p.getGameMode() != GameMode.CREATIVE)
+                .filter(p -> p.getLocation().distanceSquared(entidad.getLocation()) <= RANGO_PERSECUCION * RANGO_PERSECUCION)
+                .min(Comparator.comparingDouble(p -> p.getLocation().distanceSquared(entidad.getLocation())))
+                .orElse(null);
+
+        if (objetivo == null) return;
+
+        entidad.setTarget(objetivo);
+
+        double distancia = objetivo.getLocation().distance(entidad.getLocation());
+        long ahora = System.currentTimeMillis();
+
+        if (distancia <= RANGO_ATAQUE && ahora >= proximoAtaquePermitido) {
+            AttributeInstance danio = entidad.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE);
+            double valorDanio = danio != null ? danio.getValue() : DANIO_BASE;
+            objetivo.damage(valorDanio, entidad);
+            proximoAtaquePermitido = ahora + COOLDOWN_ATAQUE_MS;
         }
     }
 
