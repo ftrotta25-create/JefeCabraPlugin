@@ -15,6 +15,11 @@ public class JefeCabraPlugin extends JavaPlugin {
 
     private ItemFactory itemFactory;
 
+    /** Para que otros plugins (como MisionesPlugin) puedan usar los mismos items reales. */
+    public ItemFactory getItemFactory() {
+        return itemFactory;
+    }
+
     @Override
     public void onEnable() {
         this.itemFactory = new ItemFactory(this);
